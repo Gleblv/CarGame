@@ -67,7 +67,11 @@ body {
     transform: scale(1.2);
 }
 
-.play-img {
+.play-btn .play {
+    display: none;
+}
+
+.play-btn img {
     width: 60px;
     height: 60px;
 }
