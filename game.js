@@ -4,40 +4,43 @@
     const trees = document.querySelectorAll('.tree');
     const speed = 3;
 
-    let isPause = false;
-    let animationId = null;
+    let isPause = false; // пауза
+    let animationId = null; // номер анимации (для цикла)
 
     const first = trees[0];
+    const coordsTree = getCoords(first); // получаем координаты дерева
 
     animationId = requestAnimationFrame(startGame);
     function startGame () {
         treesAnimation();
-
         animationId = requestAnimationFrame(startGame);
     }
 
     function treesAnimation () { // анимация дерева
-        const newCoord = getCoordY(first) + speed; // получаем координату дерева и добавляем какое-то число
-        first.style.transform = `translateY(${newCoord}px)`; // перезаписываем новую координату
+        coordsTree.y += speed; // получаем координату Y дерева и добавляем какое-то число
+        first.style.transform = `translate(${coordsTree.x}px, ${coordsTree.y}px)`; // перезаписываем новые координаты
     }
 
-    function getCoordY (element) { // функция для получения координаты Y элемента
+    function getCoords (element) { // функция для получения координат деревьев
         const matrix = window.getComputedStyle(element).transform; // получаем координаты дерева
         const array = matrix.split(','), // строчку с координатами делим на массив через запятую
-          lastElement = array[array.length - 1], // достаём последнюю координату
-          coordY = parseFloat(lastElement); // преобразование к числу
+          y = array[array.length - 1], 
+          x = array[array.length - 2],
+          coordY = parseFloat(y), // преобразование к числу
+          coordX = parseFloat(x);
 
-        return coordY;
+        return {x: coordX, y: coordY};
     }
 
     gameButton.addEventListener('click', () => { // переключение кнопки пауза\продолжить
         isPause = !isPause;
 
         if (isPause) {
-            cancelAnimationFrame(startGame);
+            cancelAnimationFrame(animationId);
             gameButton.children[0].style.display = 'none';
             gameButton.children[1].style.display = 'initial';
         } else {
+            animationId = requestAnimationFrame(startGame);
             gameButton.children[0].style.display = 'initial';
             gameButton.children[1].style.display = 'none';
         }
